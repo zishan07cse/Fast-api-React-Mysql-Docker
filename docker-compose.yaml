@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  database:
+    build:
+      context: ./sql  # Folder where your MySQL Dockerfile is located
+      dockerfile: Dockerfile
+    ports:
+      - "3306:3306"  # Exposing MySQL port
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: my_database
+
+  backend:
+    build:
+      context: ./backend  # Folder where your FastAPI Dockerfile is located
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database  # Wait for the database to start
+
+  frontend:
+    build:
+      context: ./frontend  # Folder for your frontend application
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend  # Wait for the backend to start
